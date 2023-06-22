@@ -22,6 +22,17 @@ struct Ball {
 #[derive(Component)]
 struct Paddle;
 
+#[derive(Resource)]
+struct Score {
+    value: i32
+}
+
+impl Default for Score {
+    fn default() -> Score {
+        Score { value: 0 }
+    }
+}
+
 fn setup(mut commands: Commands, window_query: Query<&Window>) {
     let window = window_query.get_single().unwrap();
 
@@ -122,12 +133,12 @@ fn preserve_paddle_boundaries(
 }
 
 fn preserve_ball_boundaries(
-    mut ball_query: Query<(&mut Transform, &mut Ball)>,
+    mut ball_query: Query<(&Transform, &mut Ball)>,
     window_query: Query<&Window, With<PrimaryWindow>>,
     audio: Res<Audio>,
     asset_server: Res<AssetServer>
 ) {
-    if let Ok((mut transform, mut ball)) = ball_query.get_single_mut() {
+    if let Ok((transform, mut ball)) = ball_query.get_single_mut() {
         let window = window_query.get_single().unwrap();
 
         let half_ball_size = BALL_SIDE / 2.0;
@@ -137,11 +148,11 @@ fn preserve_ball_boundaries(
         let upper_limit = window.height() - MARGIN - half_ball_size;
         let lower_limit = MARGIN + half_ball_size;
 
-        let mut translation = transform.translation;
+        let translation = transform.translation;
 
-        if translation.x <= left_limit {
-            println!("YOU LOST!");
-        }
+        //if translation.x <= left_limit {
+        //   println!("YOU LOST!");
+        //}
         if translation.x >= right_limit {
             let bounce_sound_effect = asset_server.load("audio/bounce.ogg");
             audio.play(bounce_sound_effect);
@@ -157,8 +168,6 @@ fn preserve_ball_boundaries(
             audio.play(bounce_sound_effect);
             ball.direction_y = 1.0;
         }
-
-        transform.translation = translation;
     }
 }
 
@@ -166,7 +175,8 @@ fn collision(
     mut ball_query: Query<(&Transform, &mut Ball)>,
     paddle_query: Query<&Transform, (With<Paddle>, Without<Ball>)>,
     audio: Res<Audio>,
-    asset_server: Res<AssetServer>
+    asset_server: Res<AssetServer>,
+    mut score: ResMut<Score>
 ) {
     if let Ok((transform, mut ball)) = ball_query.get_single_mut() {
         for paddle in paddle_query.iter() {
@@ -182,8 +192,15 @@ fn collision(
                 }
                 let bounce_sound_effect = asset_server.load("audio/bounce.ogg");
                 audio.play(bounce_sound_effect);
+                score.value += 1
             }
         }
+    }
+}
+
+fn update_score(score: Res<Score>) {
+    if score.is_changed() {
+        println!("Score: {}", score.value.to_string());
     }
 }
 
@@ -193,6 +210,8 @@ fn main() {
         .add_plugin(LogDiagnosticsPlugin::default())
         .add_plugin(FrameTimeDiagnosticsPlugin::default())
         .add_startup_system(setup)
+        .init_resource::<Score>()
+        .add_system(update_score)
         .add_system(move_ball)
         .add_system(move_paddle)
         .add_system(preserve_paddle_boundaries)
