@@ -1,27 +1,26 @@
 use bevy::prelude::*;
+use crate::game::ui::game_over::components::{FinalScoreText, GameOverMenu, MainMenuButton, QuitButton};
 
-use crate::main_menu::components::{MainMenu, PlayButton, QuitButton};
-
-pub fn spawn_main_menu(
+pub fn spawn_game_over_menu(
     mut commands: Commands, asset_server: Res<AssetServer>
 ) {
-    build_main_menu(&mut commands, &asset_server);
+    build_game_over_menu(&mut commands, &asset_server);
 }
 
-pub fn despawn_main_menu(
+pub fn despawn_game_over_menu(
     mut commands: Commands,
-    main_menu_query: Query<Entity, With<MainMenu>>
+    pause_menu_query: Query<Entity, With<GameOverMenu>>
 ) {
-    if let Ok(main_menu_entity) = main_menu_query.get_single() {
-        commands.entity(main_menu_entity).despawn_recursive();
+    if let Ok(pause_menu_query) = pause_menu_query.get_single() {
+        commands.entity(pause_menu_query).despawn_recursive();
     }
 }
 
-pub fn build_main_menu(
+pub fn build_game_over_menu(
     commands: &mut Commands,
     asset_server: &Res<AssetServer>
 ) -> Entity {
-    let main_menu_entity = commands.spawn(
+    let pause_menu_entity = commands.spawn(
         (
             NodeBundle {
                 style: Style {
@@ -34,7 +33,7 @@ pub fn build_main_menu(
                 },
                 ..default()
             },
-            MainMenu
+            GameOverMenu
         )
     )
         .with_children(|parent| {
@@ -57,7 +56,7 @@ pub fn build_main_menu(
                         text: Text {
                             sections: vec![
                                 TextSection::new(
-                                    "Bevy Playground",
+                                    "GAME OVER!",
                                     TextStyle {
                                         font: asset_server.load("fonts/FiraSans-Bold.ttf"),
                                         font_size: 64.0,
@@ -73,7 +72,45 @@ pub fn build_main_menu(
                     }
                 );
             });
-            // === Play Button ===
+            // === Final Score Text ===
+            parent.spawn(
+                NodeBundle {
+                    style: Style {
+                        flex_direction: FlexDirection::Row,
+                        justify_content: JustifyContent::Center,
+                        align_items: AlignItems::Center,
+                        size: Size::new(Val::Px(300.0), Val::Px(120.0)),
+                        ..default()
+                    },
+                    ..default()
+                }
+            ).with_children(|parent|{
+                // === Text ===
+                parent.spawn(
+                    (
+                        TextBundle {
+                            text: Text {
+                                sections: vec![
+                                    TextSection::new(
+                                        "",
+                                        TextStyle {
+                                            font: asset_server.load("fonts/FiraSans-Bold.ttf"),
+                                            font_size: 32.0,
+                                            color: Color::WHITE,
+                                            ..default()
+                                        }
+                                    )
+                                ],
+                                alignment: TextAlignment::Center,
+                                ..default()
+                            },
+                            ..default()
+                        },
+                        FinalScoreText
+                    )
+                );
+            });
+            // === Main Menu Button ===
             parent.spawn(
                 (
                     ButtonBundle {
@@ -86,29 +123,27 @@ pub fn build_main_menu(
                         background_color: Color::rgb(0.15, 0.15, 0.15).into(),
                         ..default()
                     },
-                    PlayButton
+                    MainMenuButton
                 )
-            ).with_children(|parent|{
-               parent.spawn(
-                   TextBundle {
-                       text: Text {
-                         sections: vec![
-                             TextSection::new(
-                                 "Play",
-                                 TextStyle {
-                                     font: asset_server.load("fonts/FiraSans-Bold.ttf"),
-                                     font_size: 32.0,
-                                     color: Color::WHITE,
-                                     ..default()
-                                 }
-                             )
-                         ],
-                           alignment: TextAlignment::Center,
-                           ..default()
-                       },
-                       ..default()
-                   }
-               );
+            ).with_children(|parent| {
+                parent.spawn(TextBundle {
+                    text: Text {
+                        sections: vec![
+                            TextSection::new(
+                                "Main Menu",
+                                TextStyle {
+                                    font: asset_server.load("fonts/FiraSans-Bold.ttf"),
+                                    font_size: 32.0,
+                                    color: Color::WHITE,
+                                    ..default()
+                                }
+                            )
+                        ],
+                        alignment: TextAlignment::Center,
+                        ..default()
+                    },
+                    ..default()
+                });
             });
             // === Quit Button ===
             parent.spawn(
@@ -148,5 +183,5 @@ pub fn build_main_menu(
         })
         .id();
 
-    main_menu_entity
+    pause_menu_entity
 }

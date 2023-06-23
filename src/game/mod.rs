@@ -5,13 +5,15 @@ use crate::game::ball::BallPlugin;
 use crate::game::events::GameOver;
 use crate::game::paddle::PaddlePlugin;
 use crate::game::score::ScorePlugin;
-use crate::game::systems::{handle_game_over, pause_simulation, resume_simulation, toggle_simulation};
+use crate::game::systems::{pause_simulation, resume_simulation, toggle_simulation};
+use crate::game::ui::UIPlugin;
 
 pub mod paddle;
 pub mod score;
 pub mod ball;
 mod systems;
 pub mod events;
+mod ui;
 
 
 pub const MARGIN: f32 = 20.0;
@@ -26,8 +28,8 @@ pub const PADDLE_VELOCITY: f32 = 500.0;
 
 #[derive(States, Debug, Clone, Copy, Eq, PartialEq, Hash, Default)]
 pub enum SimulationState {
-    Running,
     #[default]
+    Running,
     Paused
 }
 
@@ -46,9 +48,9 @@ impl Plugin for SimulationPlugin {
             .add_plugin(BallPlugin)
             .add_plugin(PaddlePlugin)
             .add_plugin(ScorePlugin)
+            .add_plugin(UIPlugin)
             // Systems
             .add_system(toggle_simulation.run_if(in_state(ApplicationState::Game)))
-            .add_system(handle_game_over)
             // OnExit Systems
             .add_system(resume_simulation.in_schedule(OnExit(ApplicationState::Game)));
     }

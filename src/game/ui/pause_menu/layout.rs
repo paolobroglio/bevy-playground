@@ -1,27 +1,26 @@
 use bevy::prelude::*;
+use crate::game::ui::pause_menu::components::{MainMenuButton, PauseMenu, QuitButton, ResumeButton};
 
-use crate::main_menu::components::{MainMenu, PlayButton, QuitButton};
-
-pub fn spawn_main_menu(
+pub fn spawn_pause_menu(
     mut commands: Commands, asset_server: Res<AssetServer>
 ) {
-    build_main_menu(&mut commands, &asset_server);
+    build_pause_menu(&mut commands, &asset_server);
 }
 
-pub fn despawn_main_menu(
+pub fn despawn_pause_menu(
     mut commands: Commands,
-    main_menu_query: Query<Entity, With<MainMenu>>
+    pause_menu_query: Query<Entity, With<PauseMenu>>
 ) {
-    if let Ok(main_menu_entity) = main_menu_query.get_single() {
-        commands.entity(main_menu_entity).despawn_recursive();
+    if let Ok(pause_menu_query) = pause_menu_query.get_single() {
+        commands.entity(pause_menu_query).despawn_recursive();
     }
 }
 
-pub fn build_main_menu(
+pub fn build_pause_menu(
     commands: &mut Commands,
     asset_server: &Res<AssetServer>
 ) -> Entity {
-    let main_menu_entity = commands.spawn(
+    let pause_menu_entity = commands.spawn(
         (
             NodeBundle {
                 style: Style {
@@ -34,7 +33,7 @@ pub fn build_main_menu(
                 },
                 ..default()
             },
-            MainMenu
+            PauseMenu
         )
     )
         .with_children(|parent| {
@@ -57,7 +56,7 @@ pub fn build_main_menu(
                         text: Text {
                             sections: vec![
                                 TextSection::new(
-                                    "Bevy Playground",
+                                    "Paused",
                                     TextStyle {
                                         font: asset_server.load("fonts/FiraSans-Bold.ttf"),
                                         font_size: 64.0,
@@ -73,7 +72,7 @@ pub fn build_main_menu(
                     }
                 );
             });
-            // === Play Button ===
+            // === Resume Button ===
             parent.spawn(
                 (
                     ButtonBundle {
@@ -86,7 +85,7 @@ pub fn build_main_menu(
                         background_color: Color::rgb(0.15, 0.15, 0.15).into(),
                         ..default()
                     },
-                    PlayButton
+                    ResumeButton
                 )
             ).with_children(|parent|{
                parent.spawn(
@@ -94,7 +93,7 @@ pub fn build_main_menu(
                        text: Text {
                          sections: vec![
                              TextSection::new(
-                                 "Play",
+                                 "Resume",
                                  TextStyle {
                                      font: asset_server.load("fonts/FiraSans-Bold.ttf"),
                                      font_size: 32.0,
@@ -109,6 +108,41 @@ pub fn build_main_menu(
                        ..default()
                    }
                );
+            });
+            // === Main Menu Button ===
+            parent.spawn(
+                (
+                    ButtonBundle {
+                        style: Style {
+                            justify_content: JustifyContent::Center,
+                            align_items: AlignItems::Center,
+                            size: Size::new(Val::Px(200.0), Val::Px(80.0)),
+                            ..default()
+                        },
+                        background_color: Color::rgb(0.15, 0.15, 0.15).into(),
+                        ..default()
+                    },
+                    MainMenuButton
+                )
+            ).with_children(|parent| {
+                parent.spawn(TextBundle {
+                    text: Text {
+                        sections: vec![
+                            TextSection::new(
+                                "Main Menu",
+                                TextStyle {
+                                    font: asset_server.load("fonts/FiraSans-Bold.ttf"),
+                                    font_size: 32.0,
+                                    color: Color::WHITE,
+                                    ..default()
+                                }
+                            )
+                        ],
+                        alignment: TextAlignment::Center,
+                        ..default()
+                    },
+                    ..default()
+                });
             });
             // === Quit Button ===
             parent.spawn(
@@ -148,5 +182,5 @@ pub fn build_main_menu(
         })
         .id();
 
-    main_menu_entity
+    pause_menu_entity
 }
