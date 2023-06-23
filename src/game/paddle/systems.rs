@@ -1,10 +1,11 @@
 use bevy::prelude::*;
 use bevy::window::PrimaryWindow;
 use rand::Rng;
-use crate::ball::components::Ball;
-use crate::constants::{BALL_SIDE, MARGIN, PADDLE_VELOCITY, PADDLE_X, PADDLE_Y};
-use crate::paddle::components::Paddle;
-use crate::score::resources::Score;
+
+use crate::game::{BALL_SIDE, MARGIN, PADDLE_VELOCITY, PADDLE_X, PADDLE_Y};
+use crate::game::ball::components::Ball;
+use crate::game::paddle::components::Paddle;
+use crate::game::score::resources::Score;
 
 pub fn move_paddle(
     keyboard_input: Res<Input<KeyCode>>,

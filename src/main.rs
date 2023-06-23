@@ -1,19 +1,19 @@
 use bevy::prelude::*;
+use crate::game::SimulationPlugin;
 
-use crate::ball::BallPlugin;
-use crate::events::GameOver;
-use crate::paddle::PaddlePlugin;
-use crate::score::ScorePlugin;
-use crate::states::{ApplicationState, SimulationState};
-use crate::systems::{handle_game_over, spawn_camera, toggle_simulation, transition_to_game_state, transition_to_main_menu_state};
 
-mod events;
-mod ball;
-mod paddle;
-mod score;
+use crate::systems::{exit_game, spawn_camera, transition_to_game_state, transition_to_main_menu_state};
+
 mod systems;
-mod constants;
-mod states;
+mod game;
+
+#[derive(States, Debug, Clone, Copy, Eq, PartialEq, Hash, Default)]
+pub enum ApplicationState {
+    #[default]
+    MainMenu,
+    Game,
+    GameOver
+}
 
 fn main() {
     App::new()
@@ -21,19 +21,13 @@ fn main() {
         .add_plugins(DefaultPlugins)
         // States
         .add_state::<ApplicationState>()
-        .add_state::<SimulationState>()
-        // Game Plugin
-        .add_plugin(BallPlugin)
-        .add_plugin(PaddlePlugin)
-        .add_plugin(ScorePlugin)
-        // Events
-        .add_event::<GameOver>()
+        // Game Plugins
+        .add_plugin(SimulationPlugin)
         // Startup Systems
         .add_startup_system(spawn_camera)
         // Systems
-        .add_system(handle_game_over)
-        .add_system(toggle_simulation.run_if(in_state(ApplicationState::Game)))
         .add_system(transition_to_main_menu_state)
         .add_system(transition_to_game_state)
+        .add_system(exit_game)
         .run();
 }

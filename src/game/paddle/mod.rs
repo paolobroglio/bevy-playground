@@ -1,6 +1,8 @@
 use bevy::prelude::*;
-use crate::paddle::systems::{collision, despawn_paddle, move_paddle, preserve_paddle_boundaries, spawn_paddle};
-use crate::states::{ApplicationState, SimulationState};
+
+use crate::ApplicationState;
+use crate::game::paddle::systems::{collision, despawn_paddle, move_paddle, preserve_paddle_boundaries, spawn_paddle};
+use crate::game::SimulationState;
 
 mod components;
 pub mod systems;

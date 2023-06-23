@@ -1,6 +1,8 @@
 use bevy::prelude::*;
-use crate::ball::systems::{despawn_ball, move_ball, preserve_ball_boundaries, spawn_ball};
-use crate::states::{ApplicationState, SimulationState};
+
+use crate::ApplicationState;
+use crate::game::ball::systems::{despawn_ball, move_ball, preserve_ball_boundaries, spawn_ball};
+use crate::game::SimulationState;
 
 pub mod components;
 pub mod systems;

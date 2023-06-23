@@ -1,9 +1,10 @@
 use bevy::prelude::*;
 use bevy::window::PrimaryWindow;
-use crate::ball::components::Ball;
-use crate::constants::{BALL_SIDE, BALL_VELOCITY, MARGIN};
-use crate::events::GameOver;
-use crate::score::resources::Score;
+
+use crate::game::{BALL_SIDE, BALL_VELOCITY, MARGIN};
+use crate::game::ball::components::Ball;
+use crate::game::events::GameOver;
+use crate::game::score::resources::Score;
 
 pub fn move_ball(
     mut ball_query: Query<(&mut Transform, &Ball)>,

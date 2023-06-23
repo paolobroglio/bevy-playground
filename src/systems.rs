@@ -1,12 +1,7 @@
+use bevy::app::AppExit;
 use bevy::prelude::*;
-use crate::events::GameOver;
-use crate::states::{ApplicationState, SimulationState};
 
-pub fn handle_game_over(mut game_over_event_reader: EventReader<GameOver>) {
-    for event in game_over_event_reader.iter() {
-        println!("Your final score is: {}", event.score)
-    }
-}
+use crate::ApplicationState;
 
 pub fn spawn_camera(mut commands: Commands, window_query: Query<&Window>) {
     let window = window_query.get_single().unwrap();
@@ -14,23 +9,6 @@ pub fn spawn_camera(mut commands: Commands, window_query: Query<&Window>) {
         transform: Transform::from_xyz(window.width() / 2.0, window.height() / 2.0, 0.0),
         ..default()
     });
-}
-
-pub fn toggle_simulation(
-    keyboard_input: Res<Input<KeyCode>>,
-    simulation_state: Res<State<SimulationState>>,
-    mut next_sim_state: ResMut<NextState<SimulationState>>
-) {
-    if keyboard_input.just_pressed(KeyCode::Space) {
-        if simulation_state.0 != SimulationState::Paused {
-            next_sim_state.set(SimulationState::Paused);
-            println!("Simulation Paused");
-        }
-        if simulation_state.0 != SimulationState::Running {
-            next_sim_state.set(SimulationState::Running);
-            println!("Simulation Running");
-        }
-    }
 }
 
 pub fn transition_to_game_state(
@@ -56,5 +34,14 @@ pub fn transition_to_main_menu_state(
             next_app_state.set(ApplicationState::MainMenu);
             println!("Application State: Main Menu");
         }
+    }
+}
+
+pub fn exit_game(
+    keyboard_input: Res<Input<KeyCode>>,
+    mut app_exit_event_writer: EventWriter<AppExit>,
+) {
+    if keyboard_input.just_pressed(KeyCode::Escape) {
+        app_exit_event_writer.send(AppExit);
     }
 }

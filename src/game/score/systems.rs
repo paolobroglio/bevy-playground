@@ -1,5 +1,6 @@
 use bevy::prelude::*;
-use crate::score::resources::Score;
+
+use crate::game::score::resources::Score;
 
 pub fn insert_score(
     mut commands: Commands

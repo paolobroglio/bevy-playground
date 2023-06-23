@@ -1,7 +1,7 @@
 use bevy::prelude::*;
-use crate::score::resources::Score;
-use crate::score::systems::{insert_score, remove_score, update_score};
-use crate::states::{ApplicationState, SimulationState};
+
+use crate::ApplicationState;
+use crate::game::score::systems::{insert_score, remove_score, update_score};
 
 pub mod resources;
 pub mod systems;
