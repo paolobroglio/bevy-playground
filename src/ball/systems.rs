@@ -76,3 +76,9 @@ pub fn spawn_ball(mut commands: Commands, window_query: Query<&Window>) {
         }
     ));
 }
+
+pub fn despawn_ball(mut commands: Commands, ball_query: Query<Entity, With<Ball>>) {
+    for ball_entity in ball_query.iter() {
+        commands.entity(ball_entity).despawn();
+    }
+}

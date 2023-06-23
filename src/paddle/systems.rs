@@ -73,6 +73,12 @@ pub fn spawn_paddle(mut commands: Commands, window_query: Query<&Window>) {
     ));
 }
 
+pub fn despawn_paddle(mut commands: Commands, paddle_query: Query<Entity, With<Paddle>>) {
+    for paddle_entity in paddle_query.iter() {
+        commands.entity(paddle_entity).despawn();
+    }
+}
+
 pub fn collision(
     mut ball_query: Query<(&Transform, &mut Ball)>,
     paddle_query: Query<&Transform, (With<Paddle>, Without<Ball>)>,
